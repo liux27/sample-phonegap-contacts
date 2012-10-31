@@ -1,0 +1,77 @@
+/*
+ * Copyright (c) 2012, Intel Corporation. All rights reserved.
+ * File revision: 04 October 2012
+ * Please see http://software.intel.com/html5/license/samples 
+ * and the included README.md file for license terms and conditions.
+ */
+ 
+ /* Contact info page styles */
+.iSectionTitle {
+    display: block;
+    background: gray;
+    margin: 0px;
+    margin-top: 5px;
+    padding: 0px;
+    clear: both;
+    width: 100%;
+}
+
+.iSectionItem {
+    display: block;
+    border-top: gray solid 1px;
+    margin: 0px;
+    padding: 0px;
+    clear: both;
+}
+
+.iItemType {
+    display: block;
+    font-size: 1.5em;
+    margin: 0px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.iItemValue {
+    display: block;
+    margin: 0px;
+    padding: 5px;
+}
+
+/* Contact info page and contact list page styles */
+.contactImage {
+    position: relative;
+    float: left;    
+    clear: left;
+    margin: 12px;
+    padding: 3px;
+    background: white;
+    border: black solid 2px;
+}
+
+.contactInfo {
+    position: relative;
+    float: left;  
+    margin: 5px;
+    padding: 10px;
+}
+
+/* Edit contact form styles */
+.fSection {
+    display: none;
+    border-top: gray solid 1px;
+    padding-top: 10px;
+    margin-top: 15px;
+}
+
+.fSectionHeader {
+    color: lightgray;
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.fSectionItem {
+    font-size: 1em;
+    margin-bottom: 20px;
+}

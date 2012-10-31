@@ -1,0 +1,30 @@
+<?xml version   ="1.0" encoding="UTF-8" ?>
+<widget xmlns   = "http://www.w3.org/ns/widgets"
+    xmlns:gap   = "http://phonegap.com/ns/1.0"
+    id          = "com.intel.sample"
+    versioncode = "1"
+    version     = "1.0.0">
+    
+    <name>PhoneGap Contacts API Sample</name>
+    
+    <content src="index.html"/>
+    <icon src="icon.png" width="256" height="256" />
+    
+    <description>
+        Contacts: Work with the devices contact database. 
+    </description>
+    
+    <author href="http://software.intel.com/html5">
+        Intel Corporation
+    </author>
+        
+    <preference name="phonegap-version" value="2.0.0" />
+    <feature name="http://api.phonegap.com/1.0/contacts"/>
+    <feature name="http://api.phonegap.com/1.0/camera"/>
+    <feature name="http://api.phonegap.com/1.0/file"/>      
+
+    <!-- for Android -->
+    <preference name="orientation" value="default" />
+    <preference name="android-minSdkVersion" value="9" />
+</widget>
+

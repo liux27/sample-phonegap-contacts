@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PhoneGap Contacts API Sample</title>
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1"> 
+        <meta name="Copyright" content="&copy; 2012, Intel Corporation" />
+        <!--
+           * Copyright (c) 2012, Intel Corporation. All rights reserved.
+           * File revision: 04 October 2012
+           * Please see http://software.intel.com/html5/license/samples 
+           * and the included README.md file for license terms and conditions.
+        -->
+
+        
+        <script src="phonegap.js"></script>
+        <script type="text/javascript" src="lib/jquery-1.8.2.min.js"></script>
+        <script type="text/javascript" src="lib/jquery.mobile-1.2.0.min.js"></script>
+        <script type="text/javascript" src="js/contacts.js"></script>
+        <script type="text/javascript" src="js/photochooser.js"></script>
+        <script type="text/javascript" src="js/contacts.displist.js"></script>
+        <script type="text/javascript" src="js/contacts.form.js"></script>
+        <script type="text/javascript" src="js/common.utils.js"></script>
+        
+        <link rel="stylesheet" href="lib/jquery.mobile-1.2.0.min.css" />
+        <link rel="stylesheet" href="css/contacts.css" type="text/css">
+    </head>
+    
+    <body onload="onLoad()">
+    	
+        <!-- Contacts list page -->
+        <div data-role="page" id="cont_list_page" data-theme="a">
+            
+            <div data-role="header" data-position="fixed">
+                
+                <div id="full_list_button_container"></div>
+                <h3>PhoneGap Contacts API Sample</h3>
+                <a href="#options_popup" id="options_button" data-rel="popup" data-role="button" data-mini="true" data-theme="b" class="ui-btn-right">Options</a>
+                
+                <!-- Options PopUp -->
+                <div data-role="popup" id="options_popup" data-theme="none">
+                    
+                    <div data-role="collapsible-set" >
+                        
+                        <div id="search_chooser_button" data-role="collapsible" data-theme="b" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" data-inset="false" data-collapsed="true">
+                            <h2 onclick='openSearchChooser(event);'>Advanced search</h2>
+                        </div>
+                        
+                        <div data-role="collapsible" data-theme="b" data-content-theme="c" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" data-inset="false" data-collapsed="true">
+                            <h2>Contacts sort order...</h2>
+                            <ul data-role="listview">
+                                <li><a href="#cont_list_page" onclick="setSortPref(0)">Ascending</a></li>
+                                <li><a href="#cont_list_page" onclick="setSortPref(1)">Descending</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div data-role="collapsible" data-theme="b" data-content-theme="c" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" data-inset="false" data-collapsed="true">
+                            <h2>Display contact name as...</h2>
+                            <ul data-role="listview">
+                                <li><a href="#cont_list_page" onclick="setDisplPref(0)">Name Surname</a></li>
+                                <li><a href="#cont_list_page" onclick="setDisplPref(1)">Surname Name</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div id="new_contact_button" data-role="collapsible" data-theme="b" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d" data-inset="false" data-collapsed="true">
+                            <h2 onclick="onNewContact(event);">New contact</h2>
+                        </div>
+                        
+                    </div><!-- end: Collapsible-set -->
+                    
+                </div><!-- end: Options popup -->
+                
+            </div><!-- end: Header -->
+            
+            <div data-role="content">
+                
+                <div id="contacts_list">
+                    <!-- The list of contacts will be added dinamically here -->
+                </div>
+                
+                <div data-role="popup" id="exit_popup" class="ui-content" data-theme="e" data-history="false">
+                    <p>Press backbutton again to exit the application.</p>
+                </div>
+                
+            </div><!-- end: Content -->
+            
+            <div data-role="footer" data-position="fixed">
+                
+                <label for="search-input"></label>
+                <input type="search" name="search-input" id="search-input" placeholder="Find contact" data-icon="search"/>
+                
+                <div style="width: 100%; float: left; clear: left;">
+                    <a rel="LICENSE" href="http://software.intel.com/html5/license/samples" target="_blank">License Terms and Conditions</a>
+                </div>
+                
+            </div><!-- end: Footer -->
+            
+        </div><!-- end: Contacts list page -->
+        
+        <!-- Advanced Search Chooser page -->
+        <div data-role="page" id="searchby_chooser_page" data-theme="a">
+            
+            <div data-role="header" data-position="fixed">
+                <h3>Advanced search</h3>
+            </div>
+            
+            <div data-role="content">
+                
+                <div>
+                    <label for="searchby_chooser_input">Choose a search criteria:</label>
+                    <select id='searchby_chooser_input' name='searchby_chooser_input' data-mini='true'>
+                        <option value='name'>Name</option>
+                        <option value='nickname'>Nickname</option>
+                        <option value='phoneNumbers' selected='selected'>Phone</option>
+                        <option value='emails'>Email</option>
+                        <option value='ims'>IM</option>
+                        <option value='urls'>URL</option>
+                        <option value='addresses'>Address</option>
+                        <option value='organizations'>Organization</option>
+                    </select>
+                    
+                    <label for="search_val_input">Enter the value to search for:</label>
+                    <input id="search_val_input" name="search_val_input" type="text" />
+                    
+                    <div style="width: 100%; margin: 0 auto; margin-left: auto; margin-right: auto; align: center; text-align: center;">
+                        <a href="#" id="searchby_chooser_ok_button" data-role="button" data-theme="b" data-inline="true">Go!</a>
+                    </div>
+                </div>
+                
+            </div><!-- end: Content -->
+            
+        </div><!-- end: Advanced Search Chooser page -->
+        
+        <!-- Contact Information page -->
+        <div data-role="page" id="cont_info_page" data-theme="a">
+            
+            <div data-role="header" data-position="fixed">
+                
+                <a href="#cont_list_page" id="contact_info_cancel_button" data-role="button" data-mini="true" class="ui-btn-left">Cancel</a>
+                <h3>Contact Info</h3>
+                <a href="#cont_options_popup" data-rel="popup" data-role="button" data-mini="true" class="ui-btn-right" data-theme="b">Options</a>
+                
+                <div data-role="popup" id="cont_options_popup" data-theme="none">
+                    <ul data-role="listview" data-theme="b" data-mini="true">
+                        <li><a href="#" id="clone_contact_button">Create contact copy</a></li>
+                        <li><a href="#" id="edit_contact_button">Edit contact</a></li>
+                        <li><a href="#remove_dialog" data-rel="dialog">Remove contact</a></li>
+                    </ul>
+                </div><!-- /popup -->
+                
+            </div><!-- end: Header -->
+            
+            <div data-role="content">
+                
+                <div id="contact_info">
+                    <!-- Content will be dynamically added -->
+                </div>
+                
+            </div><!-- end: Content -->
+            
+        </div><!-- end: Contact Information page -->
+        
+        <!-- Remove contact dialog -->
+        <div data-role="page" id="remove_dialog" data-theme="a">
+            
+            <div data-role="header" data-position="fixed">
+                <h3>Remove contact</h3>
+            </div>
+            
+            <div data-role="content">
+                
+                <p>Are you sure you want to remove this contact?</p>
+                
+                <div class="ui-grid-a">
+                    <div class="ui-block-a"><a href="#cont_info_page" id="remove_cancel_button" data-role="button">No!</a></div>
+                    <div class="ui-block-b"><a href="#" id="remove_ok_button" data-role="button" data-theme="b">Definitely</a></div>
+                </div>
+                
+            </div>
+        </div><!-- end: Remove contact dialog -->
+        
+        <!-- Edit contact page -->
+        <div data-role="page" id="edit_contact_page" data-theme="a">
+            
+            <div data-role="header">
+                <a href="#" id="new_contact_cancel_button" data-role="button" data-mini="true" class="ui-btn-left">Cancel</a>
+                <h3>Edit contact</h3>
+            </div>
+            
+            <div data-role="content">
+                <form name="new_contact_form" id="new_contact_form">
+                    <!-- Form is created dynamically -->
+                </form>
+            </div>
+            
+            <div data-role="footer" >
+                <div id="new_contact_toolbar" data-role="navbar">
+                    <ul>
+                        <li>
+                            <a href="#" id="new_contact_cancel_nav" data-mini="true">Cancel</a>
+                        </li>
+                        <li>
+                            <a href="#" id="new_contact_ok_nav" data-theme="b" data-mini="true">Save</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div><!-- end: Edit contact page -->
+        
+        <!-- Add Form Item dialog -->
+        <div data-role="page" id="item_chooser_page" data-theme="a">
+            
+            <div data-role="header" data-position="fixed">
+                <h3>Choose new item type</h3>
+            </div>
+            
+            <div data-role="content">
+                <div>
+                    <label for="item_chooser_input">Choose an item type:</label>
+                    <select id='item_chooser_input' name='item_chooser_input' data-mini='true'>
+                        <option value='phoneNumbers' selected='selected'>Phone number</option>
+                        <option value='emails'>Email</option>
+                        <option value='ims'>IM</option>
+                        <option value='urls'>URL</option>
+                        <option value='addresses'>Address</option>
+                        <option value='organizations'>Organization</option>
+                        <option value='note'>Note</option>
+                    </select>
+                    <div style="width: 100%; margin: 0 auto; margin-left: auto; margin-right: auto; align: center; text-align: center;">
+                        <a href="#" id="item_chooser_ok_button" data-role="button" data-theme="b" data-inline="true">Ok</a>
+                    </div>
+                </div>
+            </div>
+            
+        </div><!-- end: Add Form Item dialog -->
+        
+	</body>
+</html>

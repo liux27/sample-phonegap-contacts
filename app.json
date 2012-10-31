@@ -1,0 +1,9 @@
+{
+  "repository" : "sample-phonegap-contacts",
+  "caption": "PhoneGap Contacts API Sample",
+  "tooltip": "Contacts: Work with the devices contact database.",
+  "description": "This sample demonstrates the use of the PhoneGap Contacts API for getting access to the device contacts database. The application supports the following actions: displaying a full contact list, displaying a full information on a single contact, creating a new contact, editing an existing contact, saving a contact to the device contacts database, searching for all contacts satisfying a search criteria, filtering a list of contacts by name, sorting a list of contacts, deleting a single contact, cloning a contact. The application uses the following libraries: jQuery, jQuery Mobile (for theming).",
+  "articleurl": "http://software.intel.com/en-us/articles/phonegap-contacts-work-with-the-devices-contact-database",
+  "category": "HTML5",
+  "visible" : "true"
+}
