@@ -12,7 +12,7 @@
         -->
 
         
-        <script src="phonegap.js"></script>
+        <script src="cordova.js"></script>
         <script type="text/javascript" src="lib/jquery-1.8.2.min.js"></script>
         <script type="text/javascript" src="lib/jquery.mobile-1.2.0.min.js"></script>
         <script type="text/javascript" src="js/contacts.js"></script>
@@ -30,7 +30,7 @@
         <!-- Contacts list page -->
         <div data-role="page" id="cont_list_page" data-theme="a">
             
-            <div data-role="header" data-position="fixed">
+            <div data-role="header" data-position="fixed" data-tap-toggle="false">
                 
                 <div id="full_list_button_container"></div>
                 <h3>PhoneGap Contacts API Sample</h3>
@@ -83,7 +83,7 @@
                 
             </div><!-- end: Content -->
             
-            <div data-role="footer" data-position="fixed">
+            <div data-role="footer" data-position="fixed" data-tap-toggle="false">
                 
                 <label for="search-input"></label>
                 <input type="search" name="search-input" id="search-input" placeholder="Find contact" data-icon="search"/>
@@ -133,7 +133,7 @@
         <!-- Contact Information page -->
         <div data-role="page" id="cont_info_page" data-theme="a">
             
-            <div data-role="header" data-position="fixed">
+            <div data-role="header" data-position="fixed" data-tap-toggle="false">
                 
                 <a href="#cont_list_page" id="contact_info_cancel_button" data-role="button" data-mini="true" class="ui-btn-left">Cancel</a>
                 <h3>Contact Info</h3>
@@ -181,7 +181,7 @@
         <!-- Edit contact page -->
         <div data-role="page" id="edit_contact_page" data-theme="a">
             
-            <div data-role="header">
+            <div data-role="header" data-position="fixed" data-tap-toggle="false">
                 <a href="#" id="new_contact_cancel_button" data-role="button" data-mini="true" class="ui-btn-left">Cancel</a>
                 <h3>Edit contact</h3>
             </div>
@@ -192,7 +192,7 @@
                 </form>
             </div>
             
-            <div data-role="footer" >
+            <div data-role="footer" data-position="fixed" data-tap-toggle="false">
                 <div id="new_contact_toolbar" data-role="navbar">
                     <ul>
                         <li>

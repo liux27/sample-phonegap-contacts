@@ -13,6 +13,11 @@ var backpressed = false;
 // Called on bodyLoad 
 function onLoad() {
     document.addEventListener("deviceready", onDeviceReady, false);
+    $("#searchby_chooser_ok_button").bind ("click", searchByCriteria); 
+    
+    if (typeof Contact === "undefined") {
+        getElement("contacts_list").innerHTML = "<p>The Cordova Contacts API is inaccessible</p>";
+    }
 }
 
 // Called when Cordova is fully loaded (and calling to Cordova functions has become safe)
@@ -33,7 +38,7 @@ function onDeviceReady() {
     $("#new_contact_cancel_nav").bind ("click", function() { window.history.back(); });
     
     $("#remove_ok_button").bind ("click", onRemoveContact); 
-    $("#searchby_chooser_ok_button").bind ("click", searchByCriteria); 
+    
     $("#clone_contact_button").bind ("click", onSaveContactCopy); 
     
     $("#exit_popup").bind ("popupafterclose", function() { backpressed = false }); 
@@ -59,9 +64,14 @@ function onDeviceReady() {
 
 // Called for a new contact creation
 function onNewContact(e) {
-    contactForm.buildContactForm(null);  
-    $.mobile.changePage("#edit_contact_page", { transition: "pop" });
+    
+    if (typeof Contact !== "undefined") {
+        
+        contactForm.buildContactForm(null);  
+        $.mobile.changePage("#edit_contact_page", { transition: "pop" });
+    }
     collapse(e, "new_contact_button");
+    $("#options_popup").popup("close");
     return cancelEventBubbling(e);
 }
 
@@ -93,11 +103,10 @@ function onSaveContactCopy(e) {
     
     $("#cont_options_popup").popup("close");
     var newContact = activeContact.clone();
-    newContact.name.familyName = newContact.name.familyName + " (copy)";
     newContact.save(onSuccess, onError);
     
     function onSuccess(contact) {
-        alert("The contact duplicate " + contact.name.givenName + " " + contact.name.familyName + " was successfully created");
+        alert("The contact duplicate " + buildDisplayName(contact) + " was successfully created");
         displContactList.updateList();
     };
 
@@ -158,7 +167,7 @@ function onSaveContact(e) {
     };
 
     function onError(contactError) {
-        alert("The contact cannot be saved: error; " + contactError.code);
+        alert("The contact cannot be saved: error: " + contactError.code);
     };
     
     function initName() {
@@ -219,19 +228,21 @@ function openSearchChooser(e) {
 function searchByCriteria() {
     
     $.mobile.changePage("#cont_list_page", { transition : "pop" });
-    var searchCriteria = getElement("searchby_chooser_input").options[getElement("searchby_chooser_input").selectedIndex].value;
-    var searchVal = getElement("search_val_input").value;
-    getElement("search_val_input").value = "";
-    
-    var addF = [];
-    addF.push(searchCriteria);
-    displContactList.updateList(searchVal, searchCriteria, addF);
-    
-    var div = getElement("full_list_button_container");
-    if (div) {
-        div.innerHTML = '<a href="#" id="full_list_button" data-role="button" data-mini="true" class="ui-btn-left" data-theme="c" >Show full list</a>';
-        $("#full_list_button").bind("click", function() { displContactList.updateList(); div.innerHTML = ""; });
-        $("#full_list_button").button();
+    if (typeof Contact !== "undefined") {
+        var searchCriteria = getElement("searchby_chooser_input").options[getElement("searchby_chooser_input").selectedIndex].value;
+        var searchVal = getElement("search_val_input").value;
+        getElement("search_val_input").value = "";
+        
+        var addF = [];
+        addF.push(searchCriteria);
+        displContactList.updateList(searchVal, searchCriteria, addF);
+        
+        var div = getElement("full_list_button_container");
+        if (div) {
+            div.innerHTML = '<a href="#" id="full_list_button" data-role="button" data-mini="true" class="ui-btn-left" data-theme="c" >Show full list</a>';
+            $("#full_list_button").bind("click", function() { displContactList.updateList(); div.innerHTML = ""; });
+            $("#full_list_button").button();
+        }
     }
 }
 
@@ -266,7 +277,6 @@ function showInfo(contactID, searchCriteria) {
     contactFindOptions.filter = searchCriteria;
     contactFindOptions.multiple = true;
     navigator.contacts.find(contactFields, contactSuccess, contactError, contactFindOptions);
-    contInfoContainer.innerHTML = "";
     
     function contactSuccess(contacts) {
         
@@ -276,20 +286,20 @@ function showInfo(contactID, searchCriteria) {
             if (contacts[i].id == contactID) {
                 
                 activeContact = contacts[i];
-                
+        
                 var cNameSection = "<div class='contactInfo'>" +
-                                        "<div>" + contacts[i].name.formatted + "</div>" +
+                                        "<div>" + buildDisplayName(contacts[i]) + "</div>" +
                                         "<div>" + (!isEmptyOrBlank(contacts[i].nickname) ?  ('"' + contacts[i].nickname + '"') : "") + "</div>" +
                                     "</div>";
                 
                 var cPhotoSection = "<div class='contactImage'>" +
                                         "<img src='" + 
-                                        ((contacts[i].photos && (contacts[i].photos.length > 0) && !isEmptyOrBlank(contacts[i].photos[0].value)) 
+                                        ((contacts[i].photos && (contacts[i].photos.length > 0) && !isEmptyOrBlank(contacts[i].photos[0].value) && (contacts[i].photos[0].value.indexOf("//:0") === -1)) 
                                             ? contacts[i].photos[0].value 
-                                            : "//:0") + 
+                                            : "resources/nophoto.jpg") + 
                                         "' width='50' height='50' />" +
                                     "</div>";
-                    
+                
                 var cPhoneNumbersSection = "";
                 if (contacts[i].phoneNumbers && (contacts[i].phoneNumbers.length > 0)) {
                     
@@ -458,7 +468,48 @@ function showInfo(contactID, searchCriteria) {
         contInfoContainer.innerHTML = "Contacts are unavailable";
         $.mobile.changePage("#cont_info_page", { transition: "pop" });
     }
+}
+
+function buildDisplayName(contact) {
+        
+    if (contact === null) {
+        
+        return null;
+    }
     
+    var name = contact.name;
+    if (name === null) {
+        
+        return "Unknown";
+    }
+    
+    if (!isEmptyOrBlank(name.formatted)) {
+            
+        return name.formatted;
+    }
+    
+    var givenName = name.givenName;
+    var familyName = name.familyName;
+    
+    if (isEmptyOrBlank(givenName)) {
+    
+        if (isEmptyOrBlank(familyName)) {
+            
+            return "Unknown";
+        
+        } else {
+            
+            return familyName;
+        }
+    } else {
+
+        if (isEmptyOrBlank(familyName)) {
+            
+                return givenName;
+        }
+    }
+    
+    return givenName + " " + familyName;
 }
 
 // Overwrites the default behavior of the device back button

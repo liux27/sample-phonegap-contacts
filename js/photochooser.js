@@ -26,12 +26,8 @@ function selectPhoto(e) {
     function onCaptureSuccess(imageData) {
         
         getElement("photo_loc_input").src = imageData;
+        getElement("photo_loc_input").style.display = "block";
     }
 
-    // Nulls contact photo URL
-    function onCaptureError(message) {
-        
-        getElement("photo_loc_input").src = "//:0";
-    }
+    function onCaptureError(message) { }
 }
-

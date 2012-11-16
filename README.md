@@ -17,6 +17,13 @@ License Information Follows
 * js/contacts.form.js
 * js/common.utils.js
 * js/photochooser.js
+* abstract.txt
+* app.json
+* config.xml
+* README.md
+* icon.png
+* resources/nophoto.jpg
+* screenshot.png
 
 Copyright (c) 2012, Intel Corporation, version: 15 October 2012
 
@@ -70,13 +77,3 @@ Cordova (PhoneGap) Library
 
 * source:  http://www.phonegap.com/
 * license:  http://www.apache.org/licenses/LICENSE-2.0.html
-
-
-IMAGES
-------
-* icon.png
-* resources/nophoto.jpg
-
-Listed images and icons were created by Intel Corporation and are licensed
-under the Creative Commons Attribution 3.0 license 
-http://creativecommons.org/licenses/by/3.0/us/

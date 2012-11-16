@@ -202,7 +202,7 @@ function ContactForm() {
                                  "<fieldset class='ui-grid-a'>" +
                                      "<div class='ui-block-a'>" +
                                          "<a href='#' id='photo_select_input' onclick='selectPhoto(event)'>" +
-                                            "<img src='//:0' id='photo_loc_input' style='height: 75px; width: 75px; display: block; border: gray 2px solid;'>" +
+                                            "<div style='height: 75px; width: 75px; display: block; border: gray 2px solid;'><img src='//:0' id='photo_loc_input' style='height: 75px; width: 75px; display: block;'></div>" +
                                          "</a>" +
                                      "</div>" +
                                      "<div class='ui-block-b'>" +
@@ -565,6 +565,7 @@ function remove(e) {
         toRemove.style.display = "none";
     } else if (toRemove.id == "photoSec") {
         getElement("photo_loc_input").src = "//:0";
+        getElement("photo_loc_input").style.display = "none";
     } else {
         var section = toRemove.parentNode;
         section.removeChild(toRemove);

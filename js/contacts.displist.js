@@ -21,7 +21,7 @@ var DispPref = {
 function DisplayableContactList(contListContainer) {
     
     contListContainer = getElement(contListContainer);
-    if (contListContainer == null) {
+    if (contListContainer === null) {
         
         return null;
     }
@@ -113,7 +113,7 @@ function DisplayableContactList(contListContainer) {
                         var gName = null; 
                         var fName = null;
                         
-                        if (contactInfoItems != null) {
+                        if (contactInfoItems !== null) {
                             
                             for (var j = 0; j < contactInfoItems.length; j++) {
                             
@@ -176,7 +176,6 @@ function DisplayableContactList(contListContainer) {
         contListContainer.innerHTML = "";
         
         if (!contacts) {
-            contListContainer.innerHTML += "<p>No contacts are available.</p>";
             return null;
         }
         
@@ -189,11 +188,14 @@ function DisplayableContactList(contListContainer) {
             var cName = buildDisplayName(contacts[i]);
             
             var cPhoto;
-            if ((contacts[i].photos) && (contacts[i].photos.length > 0) && !isEmptyOrBlank(contacts[i].photos[0].value)) {
+            if ((contacts[i].photos) && (contacts[i].photos.length > 0) && !isEmptyOrBlank(contacts[i].photos[0].value) && (contacts[i].photos[0].value.indexOf("//:0") === -1)) {
                 cPhoto = contacts[i].photos[0].value;
             } else {
                 cPhoto = "resources/nophoto.jpg";
             }
+            // Without the following string the contact avatar in the contact list would not be refreshed
+            // because of caching (but it prevents displaying pictures in the Emulator). 
+            // Comment the following line to see contact list avatars in Emulator.
             cPhoto += "?" + Math.random()*10000000000000000;
             
             var cID = (contacts[i].id) ? contacts[i].id : "none";
@@ -242,6 +244,7 @@ function DisplayableContactList(contListContainer) {
     // Adds the list of contacts to the page. Contacts, not satisfying the filter string, are invisible.
     // If a filter is empty, all contacts are displayed.
     function drawListContent(contactListArray, filter) {
+        
         var contactList;
         if (contactListArray) {
             contListContainer.innerHTML = "";
@@ -258,8 +261,8 @@ function DisplayableContactList(contListContainer) {
         }
         contactList = getElementChildren(contListContainer);
         
-        if (!contactList || (contactList.length == 0)) {
-            
+        if (!contactList || (contactList.length === 0) || (contListContainer.innerHTML === "<p>No contacts found.</p>")) {
+            contListContainer.innerHTML = "<p>No contacts found.</p>";
             return;
         }
         
@@ -279,7 +282,7 @@ function DisplayableContactList(contListContainer) {
                     
                     for (var j = 0; j < name.length; j++) {
                     
-                        if (name[j].indexOf(filter) == 0) {
+                        if (name[j].indexOf(filter) === 0) {
                             
                             contactList[i].style.display = "block";
                             break;
@@ -300,7 +303,7 @@ function DisplayableContactList(contListContainer) {
     // Gets the contact name displayed (the word order is preserved)
     function getDisplayedName(contactSection) {
         
-        if (contactSection == null) {
+        if (contactSection === null) {
             return null;
         }
         
@@ -313,7 +316,7 @@ function DisplayableContactList(contListContainer) {
         var childNodes = contactSection.getElementsByTagName("div");
         var res = "";
         
-        if (childNodes != null) {
+        if (childNodes !== null) {
             
             for (var i = 0; i < childNodes.length; i++) {
             
@@ -321,7 +324,7 @@ function DisplayableContactList(contListContainer) {
                     
                     var contactInfoItems = childNodes[i].getElementsByTagName("span");
                     
-                    if (contactInfoItems != null) {
+                    if (contactInfoItems !== null) {
                         
                         for (var j = 0; j < contactInfoItems.length; j++) {
                         
@@ -349,13 +352,13 @@ function DisplayableContactList(contListContainer) {
     // Returns the contact name to display satisfying the display criteria
     function buildDisplayName(contact) {
         
-        if (contact == null) {
+        if (contact === null) {
             
             return "<span class='gName'>Unknown</span>";
         }
         
         var name = contact.name;
-        if (name == null) {
+        if (name === null) {
             
             return "<span class='gName'>Unknown</span>";
         }
@@ -367,7 +370,13 @@ function DisplayableContactList(contListContainer) {
         
             if (isEmptyOrBlank(familyName)) {
                 
-                return "<span class='gName'>Unknown</span>";
+                if (!isEmptyOrBlank(contact.name.formatted)) {
+                
+                    return "<span class='gName'>" + contact.name.formatted + "</span>";
+                
+                } else {
+                    return "<span class='gName'>Unknown</span>";
+                }
             
             } else {
             
@@ -406,6 +415,8 @@ function DisplayableContactList(contListContainer) {
                 return name.familyName;
             } else if (!isEmptyOrBlank(name.givenName)) {
                 return name.givenName;
+            } else if (!isEmptyOrBlank(name.formatted)) {
+                return name.formatted;
             } else {
                 return "";
             }
